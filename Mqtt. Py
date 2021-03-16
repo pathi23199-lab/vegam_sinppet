@@ -1,0 +1,45 @@
+import paho.mqtt.client as mqtt
+import time
+import logging
+
+class Mqttclient(object):
+    def takeIpadd(self,ip1, port1, tpoic, message,mq):
+        print("creating new instance from method")
+        logging.info("creating new instance from method")
+        client = mqtt.Client("P2")
+        client.on_message = mq.on_message
+        print("connecting to broker")
+        logging.info("connecting to broker")
+        client.connect(ip1, port=int(port1))
+        client.loop_start()
+        print("Subscribing to topic", tpoic)
+        client.subscribe(tpoic)
+        print("Publishing message to topic", tpoic)
+        client.publish(tpoic, message)
+
+
+
+    def on_message(self,client, userdata, message):
+        print("message received " ,str(message.payload.decode("utf-8")))
+        print("message topic=",message.topic)
+        print("message qos=",message.qos)
+        print("message retain flag=",message.retain)
+
+logging.basicConfig(filename='test.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+broker_address="test.mosquitto.org"
+print("creating new instance")
+logging.info("creating new instance from method")
+mq=Mqttclient()
+client = mqtt.Client("P1")
+client.on_message=mq.on_message
+print("connecting to broker")
+logging.info("connecting to broker")
+client.connect("test.mosquitto.org", port=1883)
+client.loop_start()
+print("Subscribing to topic","vegam")
+client.subscribe("vegam")
+print("Publishing message to topic","vegam")
+client.publish("vegam","Bhimavaram")
+time.sleep(4)
+
+mq.takeIpadd("test.mosquitto.org","1883","bigil","Lakshmi",mq)
